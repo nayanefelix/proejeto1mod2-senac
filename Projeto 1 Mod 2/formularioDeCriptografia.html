@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decifrador de códigos</title>
+
+    <style>
+
+        body{
+            margin-top: 80px;
+            background: linear-gradient(#000000, #093105, #000000);
+            /*background-color: #000;*/
+            font-family: monospace;
+        }
+
+        #select{
+            display: none;
+        }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+
+            background-color: #41c435;
+            border: 5px outset #37a52d;
+            font-size: 17px;
+            border-radius: 20px;
+            padding: 30px;
+            margin-left: 350px;
+            margin-right: 350px;
+        }
+
+        form h1{
+            color: #000000;
+            text-transform: uppercase;
+            text-shadow: 3px 3px #a9e4679f;
+        }
+
+        .campo{
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        #botao{
+            width: fit-content;
+            padding: 10px;
+            border-radius: 10px;
+            border: 2px outset #37a52d;
+            background-color: #000;
+            color: #41c435;
+            font-family: monospace;
+            font-size: 18px;
+            transition: 500ms;
+        }
+
+        #botao:hover{
+            padding: 11.5px;
+            font-size: 19.5px;
+        }
+
+        form textarea{
+            width: 300px;
+        }
+
+        form select{
+            width: 300px;
+        }
+    </style>
+
+</head>
+<body>
+
+    <form>
+
+        <h1>Decifrador de códigos:</h1>
+
+        <div class="campo">
+            <label>Digite seu código aqui:</label><textarea id="textoDoUsuario"></textarea></div>
+
+        <select onchange="aparecercampo()">
+            <option value="base64" id="base64">Base 64</option>
+            <option value="cifradecesar" id="cesar">Cifra de César</option>
+        </select>
+
+        <input type="number" id="select" value="0">
+
+        <div class="radio">
+            <input onchange="mudarbotao()" id="codificar" type="radio" name="escolha" value="codificar" checked>
+            <label for ="codificar">Codificar</label>
+
+            <input onchange="mudarbotao()" id="decodificar" type="radio" name="escolha" value="decodificar">
+            <label for ="decodificar">Decodificar</label>
+        </div>
+
+        <input onclick="qualFuncao()" type="button" value="Codificar mensagem!" id="botao">
+
+        <label>Seu resultado aparecerá aqui:</label><textarea id="resposta" value="" readonly></textarea></div>
+
+    </form>
+    
+</body>
+
+<script>
+
+    function aparecercampo(){
+
+        if (document.querySelector("form select").value == "cifradecesar"){
+            document.getElementById("select").style.display = "block";
+        } else{
+            document.getElementById("select").style.display = "none";
+        }
+
+    }
+
+        function mudarbotao(){
+
+        if (document.querySelector("input[name='escolha']:checked").value == "codificar"){
+            document.getElementById("botao").value = "Codificar mensagem!";
+        } else{
+            document.getElementById("botao").value = "Decodificar mensagem!";
+        }
+
+    }
+
+    function qualFuncao(){
+        console.log("foi");
+        if (document.getElementById("codificar").checked == true){
+            if (document.getElementById("base64").selected == true){
+                    codificar64();   
+            }
+            if (document.getElementById("cesar").selected == true){
+                    codificarCesar();                
+            }
+
+        }
+
+        if (document.getElementById("decodificar").checked == true){
+            if (document.getElementById("base64").selected == true){
+                    decodificar64();   
+            }
+            if (document.getElementById("cesar").selected == true){
+                    decodificarCesar();
+            }
+
+        }
+
+    }
+    
+
+    var alfabeto = ["a", "b", "c","d","e","f","g","h","i","j","k","l","m","n","o","p","q","r","s","t","u","v","x","w","y","z"];
+
+
+    function codificarCesar(){
+        var mensagem = document.querySelector("#textoDoUsuario").value;
+        var novaMensagem = "";
+        for (var i = 0; i < mensagem.length; i++){
+            var caractere = mensagem.charAt(i);
+            if (alfabeto.includes(caractere)){
+                var novoCaractere = alfabeto.indexOf(caractere);
+                novoCaractere = novoCaractere + Number(document.getElementById("select").value);
+
+                if (novoCaractere => 26){
+                    novoCaractere = novoCaractere % 26;
+                }
+
+                novoCaractere = alfabeto[novoCaractere];
+            }
+
+            novaMensagem = novaMensagem + novoCaractere;
+        }
+
+        document.getElementById("resposta").value = novaMensagem;
+
+
+    }
+
+    function decodificarCesar(){
+        var mensagem = document.querySelector("#textoDoUsuario").value;
+        var novaMensagem = "";
+        for (var i = 0; i < mensagem.length; i++){
+            var caractere = mensagem.charAt(i);
+            if (alfabeto.includes(caractere)){
+                var novoCaractere = alfabeto.indexOf(caractere);
+                novoCaractere = novoCaractere - Number(document.getElementById("select").value);
+
+                while (novoCaractere < 0) {
+                   novoCaractere = novoCaractere + 26;
+                }
+
+                novoCaractere = alfabeto[novoCaractere];
+            }
+
+            novaMensagem = novaMensagem + novoCaractere;
+        }
+
+        document.getElementById("resposta").value = novaMensagem;
+
+
+    }
+
+    function codificar64(){
+        var mensagem = document.querySelector("#textoDoUsuario").value;
+        var novaMensagem = btoa(mensagem);
+        document.getElementById("resposta").value = novaMensagem;
+    }
+
+    function decodificar64(){
+        var mensagem = document.querySelector("#textoDoUsuario").value;
+        var novaMensagem = atob(mensagem);
+        document.getElementById("resposta").value = novaMensagem;
+    }
+
+</script>
+
+</html>
